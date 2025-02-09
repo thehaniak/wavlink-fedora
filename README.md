@@ -2,9 +2,9 @@
 # About
 
 This is an installation port for Fedora 41 Linux of the [Wavlink WL-UG6902H](https://www.wavlink.com/en_us/product/WL-UG6902H.html).
-The device works (is supported) for Ubuntu 24.04, by just running the installation script provided by Wavlink ([check my Gist about this](https://gist.github.com/thehaniak/c40506846f1418f624f4f25164e62eff)).
+The device works (is supported) on Ubuntu 24.04, by just running the installation script provided by Wavlink ([check my Gist about this](https://gist.github.com/thehaniak/c40506846f1418f624f4f25164e62eff)).
 
-To make it work on Fedora, I needed to figure out how the official installation script works and rework it accordingly.
+To make it work on Fedora, follow the steps below.
 
 # How to install 
 
@@ -31,7 +31,7 @@ If the device is not working straight away, just start the **smiusbdisplay.servi
 systemctl start smiusbdisplay.service
 ```
 
-After installation, you **shoud** reboot to make sure everything is working properly.
+After installation, you _**shoud**_ reboot to make sure everything is working properly.
 
 # How the installation port works
 
