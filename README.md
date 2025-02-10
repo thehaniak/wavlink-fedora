@@ -6,6 +6,13 @@ The device works (is supported) on Ubuntu 24.04, by just running the installatio
 
 To make it work on Fedora, follow the steps below.
 
+### Disclaimer
+
+**Any damage to your hardware or software is your sole responsability.
+Run the steps below at your own risk.**
+
+I have throughly tested this with the aforementioned device and distro and it worked, but I do not guarantee it will work on your settup.
+
 # How to install 
 
 Clone this repo:
