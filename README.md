@@ -1,19 +1,20 @@
+# wavlink-fedora
 
-# About
+## About
 
 This is an installation port for Fedora 41 Linux of the [Wavlink WL-UG6902H](https://www.wavlink.com/en_us/product/WL-UG6902H.html).
 The device works (is supported) on Ubuntu 24.04, by just running the installation script provided by Wavlink ([check my Gist about this](https://gist.github.com/thehaniak/c40506846f1418f624f4f25164e62eff)).
 
 To make it work on Fedora, follow the steps below.
 
-### Disclaimer
+### !! Disclaimer !!
 
 **Any damage to your hardware or software is your sole responsability.
 Run the steps below at your own risk.**
 
 I have throughly tested this with the aforementioned device and distro and it worked, but I do not guarantee it will work on your settup.
 
-# How to install 
+## How to install 
 
 Clone this repo:
 
