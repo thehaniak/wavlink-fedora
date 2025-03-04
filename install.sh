@@ -8,7 +8,8 @@ readonly PRODUCT="Silicon Motion Linux USB Display Software"
 VERSION=2.22.1.0
 ACTION=install
 
-FEDORA41_DISPLAYLINK_RPM=https://github.com/displaylink-rpm/displaylink-rpm/releases/download/v6.1.0-2/fedora-41-displaylink-1.14.7-4.github_evdi.x86_64.rpm
+#FEDORA41_DISPLAYLINK_RPM=https://github.com/displaylink-rpm/displaylink-rpm/releases/download/v6.1.0-2/fedora-41-displaylink-1.14.7-4.github_evdi.x86_64.rpm
+FEDORA41_DISPLAYLINK_RPM=https://github.com/displaylink-rpm/displaylink-rpm/releases/download/v6.1.0-3/fedora-40-displaylink-1.14.8-1.github_evdi.x86_64.rpm
 
 add_upstart_script()
 {
@@ -289,3 +290,5 @@ fi
 distro_check
 
 install
+
+systemctl start smiusbdisplay.service
