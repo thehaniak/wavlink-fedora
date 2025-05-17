@@ -5,11 +5,10 @@ readonly COREDIR=/opt/siliconmotion
 readonly OTHERPDDIR=/opt/displaylink
 readonly LOGPATH=/var/log/SMIUSBDisplay
 readonly PRODUCT="Silicon Motion Linux USB Display Software"
-VERSION=2.22.1.0
-ACTION=install
+readonly FEDORA_VERSION=$(cat /etc/fedora-release | cut -d' ' -f3)
+readonly ARCHITECTURE=$(arch)
+readonly FEDORA_SUPPORTED_VERSIONS="41 42"
 
-#FEDORA41_DISPLAYLINK_RPM=https://github.com/displaylink-rpm/displaylink-rpm/releases/download/v6.1.0-2/fedora-41-displaylink-1.14.7-4.github_evdi.x86_64.rpm
-FEDORA41_DISPLAYLINK_RPM=https://github.com/displaylink-rpm/displaylink-rpm/releases/download/v6.1.0-3/fedora-40-displaylink-1.14.8-1.github_evdi.x86_64.rpm
 
 add_upstart_script()
 {
@@ -47,7 +46,7 @@ script
 	fi
 	dkms install /opt/siliconmotion/module/
 	if [ $? == 0 ]; then
-		cp /opt/siliconmotion/evdi.conf /etc/modprobe.d 
+		cp /opt/siliconmotion/evdi.conf /etc/modprobe.d
 		modprobe evdi
 	fi
     fi
@@ -135,22 +134,32 @@ cleanup()
 binary_location()
 {
   echo "$(pwd)/binaries"
-  
+
 }
 
 install()
 {
   echo "Installing..."
 
-  echo "Installing EVDI displaylink driver from URL: ${FEDORA41_DISPLAYLINK_RPM}"
-  dnf install ${FEDORA41_DISPLAYLINK_RPM}
+  echo "Finding latest EVDI driver for Fedora ${FEDORA_VERSION} ${ARCHITECTURE}..."
+
+  jq_query=".assets[] | select(.browser_download_url | contains(\"${ARCHITECTURE}\") and contains(\"fedora-${FEDORA_VERSION}\")) | .browser_download_url"
+
+  DISPLAYLINK_RPM=$(curl -sL https://api.github.com/repos/displaylink-rpm/displaylink-rpm/releases/latest | jq -r "${jq_query}")
+
+  echo "Found EVDI displaylink driver URL: ${DISPLAYLINK_RPM}"
+
+  read -rp 'Do you want to continue with EVDI installation? [y/N] ' CHOICE
+
+  [[ "${CHOICE:-N}" == "${CHOICE#[nN]}" ]] || exit 1
+
+  dnf install ${DISPLAYLINK_RPM} lsb_release || exit 1
 
   mkdir -p $COREDIR
   chmod 0755 $COREDIR
-  
-  # cp -f "$SELF" "$COREDIR"
+
   echo "Copying binaries..."
-  cp -f $(pwd)/binaries/* $COREDIR
+  cp -vf $(pwd)/binaries/* $COREDIR
 
   echo "Creating symlinks and setting permissions..."
   ln -sf $COREDIR/libusb-1.0.so.0.2.0 $COREDIR/libusb-1.0.so.0
@@ -160,14 +169,14 @@ install()
   chmod 0755 $COREDIR/SMIUSBDisplayManager
   chmod 0755 $COREDIR/libusb*.so*
   chmod 0755 $COREDIR/SMIFWLogCapture
-  
+
   ln -sf $COREDIR/SMIFWLogCapture /usr/bin/SMIFWLogCapture
   chmod 0755 /usr/bin/SMIFWLogCapture
 
   source smi-udev-installer.sh
   siliconmotion_bootstrap_script="$COREDIR/smi-udev.sh"
   create_bootstrap_file "$SYSTEMINITDAEMON" "$siliconmotion_bootstrap_script"
-  
+
   add_wayland_script
 
   echo "Adding udev rule for SiliconMotion devices"
@@ -211,7 +220,7 @@ uninstall()
   rm -f /etc/udev/rules.d/99-smiusbdisplay.rules
   udevadm control -R
   udevadm trigger
-  
+
   remove_wayland_script
 
   echo "[ Removing Core folder ]"
@@ -221,7 +230,7 @@ uninstall()
 
   if [ -d $OTHERPDDIR ]; then
 	  echo "WARNING: There are other products in the system using EVDI."
-  else 
+  else
 	  echo "Removing EVDI from kernel tree, DKMS, and removing sources."
     	  (
     	  cd "$(dirname "$(realpath "${BASH_SOURCE[0]}")")" && \
@@ -267,15 +276,19 @@ detect_init_daemon()
 
 distro_check()
 {
-  if [ -f /etc/fedora-release ] && grep -q "Fedora release 41" /etc/fedora-release
+  if [ -f /etc/fedora-release ] && grep -q ${FEDORA_VERSION} /etc/fedora-release \\
   then
-    echo -n "Fedora 41 recognized. "
-  else
-    echo -n "This script has not been tested on your distro/release. "
-    
-    read -rp 'Do you want to continue? [y/N] ' CHOICE
+    echo "Found ${FEDORA_VERSION} on arch ${ARCHITECTURE}"
+    if [[ "${FEDORA_SUPPORTED_VERSIONS}" =~ (" "|^)${FEDORA_VERSION}(" "|$) ]]
+    then
+      echo -n "Fedora ${FEDORA_VERSION} recognized. "
+    else
+      echo -n "This script has not been tested on your distro/release. "
 
-    [[ "${CHOICE:-N}" == "${CHOICE#[nN]}" ]] || exit 1
+      read -rp 'Do you want to continue? [y/N] ' CHOICE
+
+      [[ "${CHOICE:-N}" == "${CHOICE#[nN]}" ]] || exit 1
+    fi
   fi
 
   echo "Will proceed..."
@@ -289,6 +302,10 @@ fi
 [ -z "$SYSTEMINITDAEMON" ] && detect_init_daemon || echo "Trying to use the forced init system: $SYSTEMINITDAEMON"
 distro_check
 
-install
+if [[ "$1" == "" || "$1" == "install" ]]
+then
+  install
+elif [[ "$1" == "remove" ]]
+  echo "Remove not implemented."
+fi
 
-systemctl start smiusbdisplay.service

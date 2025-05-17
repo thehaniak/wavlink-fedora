@@ -14,28 +14,28 @@ Run the steps below at your own risk.**
 
 I have throughly tested this with the aforementioned device and distro and it worked, but I do not guarantee it will work on your settup.
 
-## How to install 
+## How to install
 
 Clone this repo:
 
-```
+```bash
 git clone https://github.com/thehaniak/wavlink-fedora.git
 cd wavlink-fedora
 ```
 
-
 Add run permissions and run the install.sh script as root:
 
-```
+```bash
 chmod +x install.sh
 sudo ./install.sh
 ```
 
-The install script will prompt you to install the EVDI driver. If you approve, it will also install the SMI USB driver and service.
+The install script will prompt you to install the EVDI driver.
+If you select Yes, it will also install the SMI USB driver and service.
 
-If the device is not working straight away, just start the **smiusbdisplay.service**.
+If the device is not working straight away, try starting **smiusbdisplay.service**.
 
-```
+```bash
 systemctl start smiusbdisplay.service
 ```
 
@@ -45,15 +45,15 @@ After installation, you _**shoud**_ reboot to make sure everything is working pr
 
 If you're too lazy to check the code 😜 ...
 
-1) Downloads and installs the _latest_ EVDI driver RPM from [displaylink-rpm](https://github.com/displaylink-rpm/displaylink-rpm/releases) (the version/link is actually hardcoded, but can be changed easily)
+1) Downloads and installs the _latest_ EVDI driver RPM from [displaylink-rpm](https://github.com/displaylink-rpm/displaylink-rpm/releases)
 2) Copies the binaries (firmware and driver) to _/opt/siliconmotion_.
-3) Installs _smiusbdisplay.service_.
+3) Installs systemd _smiusbdisplay.service_.
 
 # Next steps
 
 - Cleanup the install script.
-- Make the EVDI version installation dynamic.
 - Make it possible to uninstall the SMI and EVDI drivers.
+- Remove upstart script support, as it's no longer necessary on Fedora>=41.
 
 # Wavlink Original License
 
