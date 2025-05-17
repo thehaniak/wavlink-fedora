@@ -8,7 +8,6 @@ readonly PRODUCT="Silicon Motion Linux USB Display Software"
 readonly FEDORA_VERSION=$(cat /etc/fedora-release | cut -d' ' -f3)
 readonly ARCHITECTURE=$(arch)
 readonly FEDORA_SUPPORTED_VERSIONS="41 42"
-readonly VERSION=1.0.1
 ACTION=install
 
 
@@ -155,7 +154,7 @@ install()
 
   [[ "${CHOICE:-N}" == "${CHOICE#[nN]}" ]] || exit 1
 
-  dnf install ${DISPLAYLINK_RPM}
+  dnf install ${DISPLAYLINK_RPM} lsb_release || exit 1
 
   mkdir -p $COREDIR
   chmod 0755 $COREDIR
