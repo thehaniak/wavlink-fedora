@@ -31,9 +31,10 @@ chmod +x install.sh
 sudo ./install.sh
 ```
 
-The install script will prompt you to install the EVDI driver. If you approve, it will also install the SMI USB driver and service.
+The install script will prompt you to install the EVDI driver.
+If you select Yes, it will also install the SMI USB driver and service.
 
-If the device is not working straight away, just start the **smiusbdisplay.service**.
+If the device is not working straight away, try starting **smiusbdisplay.service**.
 
 ```bash
 systemctl start smiusbdisplay.service

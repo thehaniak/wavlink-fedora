@@ -8,7 +8,6 @@ readonly PRODUCT="Silicon Motion Linux USB Display Software"
 readonly FEDORA_VERSION=$(cat /etc/fedora-release | cut -d' ' -f3)
 readonly ARCHITECTURE=$(arch)
 readonly FEDORA_SUPPORTED_VERSIONS="41 42"
-ACTION=install
 
 
 add_upstart_script()
@@ -160,7 +159,7 @@ install()
   chmod 0755 $COREDIR
 
   echo "Copying binaries..."
-  cp -f $(pwd)/binaries/* $COREDIR
+  cp -vf $(pwd)/binaries/* $COREDIR
 
   echo "Creating symlinks and setting permissions..."
   ln -sf $COREDIR/libusb-1.0.so.0.2.0 $COREDIR/libusb-1.0.so.0
@@ -303,6 +302,11 @@ fi
 [ -z "$SYSTEMINITDAEMON" ] && detect_init_daemon || echo "Trying to use the forced init system: $SYSTEMINITDAEMON"
 distro_check
 
-install
+if [[ "$1" == "" || "$1" == "install" ]]
+then
+  install
+elif [[ "$1" == "remove" ]]
+  echo "Remove still pending..."
+fi
 
-systemctl start smiusbdisplay.service
+# systemctl start smiusbdisplay.service
