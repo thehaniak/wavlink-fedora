@@ -23,7 +23,6 @@ git clone https://github.com/thehaniak/wavlink-fedora.git
 cd wavlink-fedora
 ```
 
-
 Add run permissions and run the install.sh script as root:
 
 ```bash
@@ -54,8 +53,7 @@ If you're too lazy to check the code 😜 ...
 
 - Cleanup the install script.
 - Make it possible to uninstall the SMI and EVDI drivers.
-- Remove upstart script support, as it's no longer necessary from Fedora 41.
-
+- Remove upstart script support, as it's no longer necessary on Fedora>=41.
 
 # Wavlink Original License
 

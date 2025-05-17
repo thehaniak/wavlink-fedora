@@ -306,7 +306,6 @@ if [[ "$1" == "" || "$1" == "install" ]]
 then
   install
 elif [[ "$1" == "remove" ]]
-  echo "Remove still pending..."
+  echo "Remove not implemented."
 fi
 
-# systemctl start smiusbdisplay.service
