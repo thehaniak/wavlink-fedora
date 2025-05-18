@@ -18,6 +18,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
+- Removed support of architectures different than x86_64, which Silicon Motion SM76x driver does not officially support.
+
 ### Fixed
 
 - Fixed user selecting "No" when installing the EVDI driver bug on dnf prompt.
