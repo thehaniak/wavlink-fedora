@@ -248,12 +248,11 @@ uninstall()
 usage()
 {
   echo
-  echo "Installs $PRODUCT, version $VERSION."
-  echo "Usage: $SELF [ install | uninstall ]"
+  echo "Installs $PRODUCT."
+  echo "Usage: $0 [ install | uninstall | help | system-check ]"
   echo
-  echo "The default operation is install."
+  echo "The default operation is system-check."
   echo "If unknown argument is given, a quick compatibility check is performed but nothing is installed."
-  exit 1
 }
 
 detect_init_daemon()
@@ -274,24 +273,33 @@ detect_init_daemon()
     fi
 }
 
-distro_arch_check()
+prompt_supported()
 {
-  if [ -f /etc/fedora-release ] \
-    && grep -q ${FEDORA_VERSION} /etc/fedora-release \
-    && [[ "${ARCHITECTURE}" == "x86_64" ]] \
-    && [[ "${FEDORA_SUPPORTED_VERSIONS}" =~ (" "|^)${FEDORA_VERSION}(" "|$) ]]
+  if ! system_check
   then
-    echo "Found Fedora ${FEDORA_VERSION} on arch ${ARCHITECTURE}."
-  else
-    echo -n "This script has not been tested on your distro/release or arquitecture."
-
     read -rp 'Do you want to continue? [y/N] ' CHOICE
 
     [[ "${CHOICE:-N}" == "${CHOICE#[nN]}" ]] || exit 1
   fi
-
-  echo "Will proceed..."
 }
+
+system_check()
+{
+  echo -n "System check: "
+
+  if [ -f /etc/fedora-release ] \
+    && [[ "${ARCHITECTURE}" == "x86_64" ]] \
+    && [[ "${FEDORA_SUPPORTED_VERSIONS}" =~ (" "|^)${FEDORA_VERSION}(" "|$) ]]
+  then
+    echo "Found Fedora ${FEDORA_VERSION} on arch ${ARCHITECTURE}."
+    return 0
+  else
+    echo "This script has not been tested on your distro/release or arquitecture."
+  fi
+
+  return 1
+}
+
 
 if [ "$(id -u)" != "0" ]; then
   echo "You need to be root to use this script." >&2
@@ -300,13 +308,27 @@ fi
 
 [ -z "$SYSTEMINITDAEMON" ] && detect_init_daemon || echo "Trying to use the forced init system: $SYSTEMINITDAEMON"
 
-distro_arch_check
+case $1 in
 
-if [[ "$1" == "" || "$1" == "install" ]]
-then
-  install
-elif [[ "$1" == "remove" ]]
-then
-  echo "Remove not implemented."
-fi
+  "install")
+    prompt_supported
+    install
+    ;;
+
+  "usage" | "help")
+    usage
+    ;;
+
+  "remove")
+    echo "Remove not implemented."
+    ;;
+
+  *)
+    if system_check
+    then
+      echo "To install run \"sudo $0 install\"."
+    fi
+    ;;
+
+esac
 

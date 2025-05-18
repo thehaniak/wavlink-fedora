@@ -2,7 +2,7 @@
 
 ## About
 
-This is an installation port for Fedora 41 Linux of the [Wavlink WL-UG6902H](https://www.wavlink.com/en_us/product/WL-UG6902H.html).
+This is an installation port for Fedora 41/42 Linux of the [Wavlink WL-UG6902H](https://www.wavlink.com/en_us/product/WL-UG6902H.html).
 The device works (is supported) on Ubuntu 24.04, by just running the installation script provided by Wavlink ([check my Gist about this](https://gist.github.com/thehaniak/c40506846f1418f624f4f25164e62eff)).
 
 To make it work on Fedora, follow the steps below.
@@ -27,35 +27,35 @@ Add run permissions and run the install.sh script as root:
 
 ```bash
 chmod +x install.sh
-sudo ./install.sh
+sudo ./install.sh install
 ```
 
-The install script will prompt you to install the EVDI driver.
+The install script will prompt if you want to install the EVDI driver.
 If you select Yes, it will also install the SMI USB driver and service.
 
-If the device is not working straight away, try starting **smiusbdisplay.service**.
+If the device is plugged in and not working straight away, plug it in and try starting **smiusbdisplay.service**.
 
 ```bash
 systemctl start smiusbdisplay.service
 ```
 
-After installation, you _**shoud**_ reboot to make sure everything is working properly.
+After installation, you _**shoud**_ reboot your system to make sure everything is working properly.
 
 # How the installation port works
 
 If you're too lazy to check the code 😜 ...
 
 1) Downloads and installs the _latest_ EVDI driver RPM from [displaylink-rpm](https://github.com/displaylink-rpm/displaylink-rpm/releases)
-2) Copies the binaries (firmware and driver) to _/opt/siliconmotion_.
+2) Copies the binaries (firmware and driver(?)) to _/opt/siliconmotion_.
 3) Installs systemd _smiusbdisplay.service_.
 
 # Next steps
 
-- Cleanup the install script.
 - Make it possible to uninstall the SMI and EVDI drivers.
 - Remove upstart script support, as it's no longer necessary on Fedora>=41.
+- Keep cleaning up the install script.
 
-# Wavlink Original License
+# Wavlink/SiliconMotion Original License
 
 ```
 //Copyright (c) 2020, SiliconMotion Inc.

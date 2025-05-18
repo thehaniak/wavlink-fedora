@@ -11,8 +11,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Automatically find the EVDI driver's URL download link, which installs the latest RPM version.
 - Added confirm prompt after finding the EVDI download URL.
+- Added help/usage.
 
 ### Changed
+
+- Changed default option to `system-check` instead of `install`.
 
 ### Deprecated
 
