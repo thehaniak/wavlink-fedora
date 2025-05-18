@@ -1,0 +1,16 @@
+name: Syntax Check
+
+on: [push, pull_request]
+
+jobs:
+  check-syntax:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Check Bash syntax
+        run: |
+          for file in $(find . -name '*.sh'); do
+            bash -n "$file" || exit 1;
+          done
