@@ -274,21 +274,20 @@ detect_init_daemon()
     fi
 }
 
-distro_check()
+distro_arch_check()
 {
-  if [ -f /etc/fedora-release ] && grep -q ${FEDORA_VERSION} /etc/fedora-release \\
+  if [ -f /etc/fedora-release ] \
+    && grep -q ${FEDORA_VERSION} /etc/fedora-release \
+    && [[ "${ARCHITECTURE}" == "x86_64" ]] \
+    && [[ "${FEDORA_SUPPORTED_VERSIONS}" =~ (" "|^)${FEDORA_VERSION}(" "|$) ]]
   then
-    echo "Found ${FEDORA_VERSION} on arch ${ARCHITECTURE}"
-    if [[ "${FEDORA_SUPPORTED_VERSIONS}" =~ (" "|^)${FEDORA_VERSION}(" "|$) ]]
-    then
-      echo -n "Fedora ${FEDORA_VERSION} recognized. "
-    else
-      echo -n "This script has not been tested on your distro/release. "
+    echo "Found Fedora ${FEDORA_VERSION} on arch ${ARCHITECTURE}."
+  else
+    echo -n "This script has not been tested on your distro/release or arquitecture."
 
-      read -rp 'Do you want to continue? [y/N] ' CHOICE
+    read -rp 'Do you want to continue? [y/N] ' CHOICE
 
-      [[ "${CHOICE:-N}" == "${CHOICE#[nN]}" ]] || exit 1
-    fi
+    [[ "${CHOICE:-N}" == "${CHOICE#[nN]}" ]] || exit 1
   fi
 
   echo "Will proceed..."
@@ -300,12 +299,14 @@ if [ "$(id -u)" != "0" ]; then
 fi
 
 [ -z "$SYSTEMINITDAEMON" ] && detect_init_daemon || echo "Trying to use the forced init system: $SYSTEMINITDAEMON"
-distro_check
+
+distro_arch_check
 
 if [[ "$1" == "" || "$1" == "install" ]]
 then
   install
 elif [[ "$1" == "remove" ]]
+then
   echo "Remove not implemented."
 fi
 
